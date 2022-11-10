@@ -17,7 +17,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 	 * Inserta en base de datos el nuevo Producto, actualizando el id en el bean Producto.
 	 */
 	@Override	
-	public synchronized void create(Producto Producto) {
+	public synchronized void create(Producto producto) {
 		
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -32,10 +32,12 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
         	//ps = conn.prepareStatement("INSERT INTO Producto (nombre) VALUES (?)", new String[] {"codigo"});        	
         	//Ver también, AbstractDAOImpl.executeInsert ...
         	//Columna Producto.codigo es clave primaria auto_increment, por ese motivo se omite de la sentencia SQL INSERT siguiente. 
-        	ps = conn.prepareStatement("INSERT INTO producto (nombre) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+        	ps = conn.prepareStatement("INSERT INTO producto (nombre, precio, codigo_fabricante) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             
             int idx = 1;
-            ps.setString(idx++, Producto.getNombre());
+            ps.setString(idx++, producto.getNombre());
+            ps.setDouble(idx++, producto.getPrecio());
+            ps.setInt(idx, producto.getCodigofabricante());
                    
             int rows = ps.executeUpdate();
             if (rows == 0) 
@@ -43,7 +45,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
             
             rsGenKeys = ps.getGeneratedKeys();
             if (rsGenKeys.next()) 
-            	Producto.setCodigo(rsGenKeys.getInt(1));
+            	producto.setCodigo(rsGenKeys.getInt(1));
                       
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -143,7 +145,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 	 * Actualiza Producto con campos del bean Producto según ID del mismo.
 	 */
 	@Override
-	public void update(Producto Producto) {
+	public void update(Producto producto) {
 		
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -152,10 +154,12 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
         try {
         	conn = connectDB();
         	
-        	ps = conn.prepareStatement("UPDATE producto SET nombre = ?  WHERE codigo = ?");
+        	ps = conn.prepareStatement("UPDATE producto SET nombre = ? , precio = ? , codigo_fabricante = ?  WHERE codigo = ?");
         	int idx = 1;
-        	ps.setString(idx++, Producto.getNombre());
-        	ps.setInt(idx, Producto.getCodigo());
+        	ps.setString(idx++, producto.getNombre());
+        	ps.setDouble(idx++, producto.getPrecio());
+        	ps.setInt(idx++, producto.getCodigofabricante());
+        	ps.setInt(idx, producto.getCodigo());
         	
         	int rows = ps.executeUpdate();
         	
