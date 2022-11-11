@@ -2,6 +2,8 @@ package org.iesvegademijas.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.iesvegademijas.dao.FabricanteDAO;
 import org.iesvegademijas.dao.FabricanteDAOImpl;
 import org.iesvegademijas.model.Fabricante;
+import org.iesvegademijas.model.FabricanteDTO;
 
 public class FabricantesServlet extends HttpServlet {
 
@@ -35,15 +38,40 @@ public class FabricantesServlet extends HttpServlet {
 		String pathInfo = request.getPathInfo(); //
 			
 		if (pathInfo == null || "/".equals(pathInfo)) {
+			
 			FabricanteDAO fabDAO = new FabricanteDAOImpl();
 			
 			//GET 
 			//	/fabricantes/
 			//	/fabricantes
 			
+			/*
 			request.setAttribute("listaFabricantes", fabDAO.getAll());		
 			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantes.jsp");
-			        		       
+	        */
+			
+			/*
+			List<Fabricante> listFab = fabDAO.getAll();
+			List<FabricanteDTO> listFabDTO = listFab.stream()
+					.map(f-> {
+						FabricanteDTO fDTO = new FabricanteDTO();
+						fDTO.setCodigo(f.getCodigo());
+						fDTO.setNombre(f.getNombre());
+						fDTO.setNumProductos(fabDAO.getCountProductos(f.getCodigo()).get());
+						return fDTO;
+						})
+					.collect(Collectors.toList());
+					
+			System.out.print(listFabDTO);
+			
+			
+			request.setAttribute("listaFabricantesDTO", listFabDTO);		
+			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantesDTO.jsp");
+			*/
+			
+			request.setAttribute("listaFabricantesDTO", fabDAO.getAllDTOPlusCountProductos());		
+			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantesDTO.jsp");
+			
 		} else {
 			// GET
 			// 		/fabricantes/{id}
@@ -69,7 +97,9 @@ public class FabricantesServlet extends HttpServlet {
 				// /fabricantes/{id}
 				try {
 					request.setAttribute("fabricante",fabDAO.find(Integer.parseInt(pathParts[1])));
-					dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detalle-fabricante.jsp");
+					
+					request.setAttribute("numProductos",fabDAO.getCountProductos(Integer.parseInt(pathParts[1])));
+					dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detalle-fabricanteDTO.jsp");
 					        								
 				} catch (NumberFormatException nfe) {
 					nfe.printStackTrace();

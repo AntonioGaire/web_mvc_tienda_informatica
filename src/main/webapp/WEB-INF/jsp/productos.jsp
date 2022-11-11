@@ -60,7 +60,7 @@
 			<div style="float: left;width: 10%"><%= producto.getCodigo()%></div>
 			<div style="float: left;width: 40%"><%= producto.getNombre()%></div>
 			<div style="float: left;width: 10%"><%= producto.getPrecio()%></div>
-			<div style="float: left;width: 20%"><%= producto.getCodigofabricante()%></div>
+			<div style="float: left;width: 20%"><a style="color:black; text-decoration:none" href="/tienda_informatica/fabricantes/<%= producto.getCodigofabricante()%>"><%= producto.getCodigofabricante()%></a></div>
 			<div style="float: none;width: auto;overflow: hidden;">
 				<form action="/tienda_informatica/productos/<%= producto.getCodigo()%>" style="display: inline;">
     				<input type="submit" value="Ver Detalle" />
