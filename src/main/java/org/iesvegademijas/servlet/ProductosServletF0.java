@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.iesvegademijas.dao.FabricanteDAO;
+import org.iesvegademijas.dao.FabricanteDAOImpl;
 import org.iesvegademijas.dao.ProductoDAO;
 import org.iesvegademijas.dao.ProductoDAOImpl;
+import org.iesvegademijas.model.Fabricante;
 import org.iesvegademijas.model.Producto;
 
 /**
@@ -63,7 +66,11 @@ public class ProductosServletF0 extends HttpServlet {
 			if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
 				
 				// GET
-				// /producto/crear		
+				// /producto/crear
+				
+				FabricanteDAO fabDAO = new FabricanteDAOImpl();
+				
+				request.setAttribute("listaFabricantes", fabDAO.getAll());
 				dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/crear-producto.jsp");
         												
 			
