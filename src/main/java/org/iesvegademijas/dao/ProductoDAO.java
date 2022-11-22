@@ -16,5 +16,9 @@ public interface ProductoDAO {
 	public void update(Producto producto);
 	
 	public void delete(int id);
+	
+	public List<Producto> getByName(String name);
+	
+	public List<Producto> getByFulltextName(String name);
 
 }

@@ -2,6 +2,8 @@ package org.iesvegademijas.servlet;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -46,8 +48,49 @@ public class ProductosServletF0 extends HttpServlet {
 			//GET 
 			//	/productos/
 			//	/productos
+			/*
+			//Lista simple de productos  
 			
 			request.setAttribute("listaProductos", proDAO.getAll());	
+
+			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos.jsp");
+			*/
+			/*
+			String partialName = request.getParameter("filtrar-por-nombre");
+			
+			List<Producto> listProd = proDAO.getAll();
+			
+			listProd = listProd.stream()
+					.filter(p -> p.getNombre().toLowerCase().contains(partialName.toLowerCase()))
+					.collect(Collectors.toList());
+			
+			request.setAttribute("listaProductos", listProd);	
+
+			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos.jsp");
+			*/
+			/*
+			String partialName = request.getParameter("filtrar-por-nombre");
+			
+			if(partialName != null) {
+				partialName = '%'+partialName+'%';
+			}else {
+				partialName = "%%";
+			}
+			
+			request.setAttribute("listaProductos", proDAO.getByName(partialName));	
+
+			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos.jsp");
+			*/
+			
+			String partialName = request.getParameter("filtrar-por-nombre");
+			System.out.println(partialName + '0');
+			
+			if(partialName != null && !partialName.equals("")) {
+				partialName += '*';
+				request.setAttribute("listaProductos", proDAO.getByFulltextName(partialName));	
+			}else {
+				request.setAttribute("listaProductos", proDAO.getAll());	
+			}
 
 			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos.jsp");
 			

@@ -2,6 +2,7 @@ package org.iesvegademijas.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class FabricantesServlet extends HttpServlet {
 		RequestDispatcher dispatcher;
 				
 		String pathInfo = request.getPathInfo(); //
-			
+					
 		if (pathInfo == null || "/".equals(pathInfo)) {
 			
 			FabricanteDAO fabDAO = new FabricanteDAOImpl();
@@ -67,9 +68,58 @@ public class FabricantesServlet extends HttpServlet {
 			
 			request.setAttribute("listaFabricantesDTO", listFabDTO);		
 			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantesDTO.jsp");
+			
+			
+			String orderBy = request.getParameter("ordenar-por");
+			String orderDirection = request.getParameter("modo-ordenar");
+			
+			
+			List<FabricanteDTO> listFabDTO = fabDAO.getAllDTOPlusCountProductos();
+			
+			if("codigo".equals(orderBy)) {
+				if("ascendente".equals(orderDirection)) {
+					
+					listFabDTO = listFabDTO.stream()
+					.sorted(Comparator.comparing(FabricanteDTO :: getCodigo))
+					.collect(Collectors.toList());
+					
+				}else{
+					listFabDTO = listFabDTO.stream()
+					.sorted(Comparator.comparing(FabricanteDTO :: getCodigo).reversed())
+					.collect(Collectors.toList());
+				}
+			}else {
+				if("ascendente".equals(orderDirection)) {
+					listFabDTO = listFabDTO.stream()
+					.sorted(Comparator.comparing(FabricanteDTO :: getNombre))
+					.collect(Collectors.toList());
+				}else{
+					listFabDTO = listFabDTO.stream()
+					.sorted(Comparator.comparing(FabricanteDTO :: getNombre).reversed())
+					.collect(Collectors.toList());
+				}
+			}
 			*/
 			
-			request.setAttribute("listaFabricantesDTO", fabDAO.getAllDTOPlusCountProductos());		
+			String orderBy = request.getParameter("ordenar-por");
+			String orderDirection = request.getParameter("modo-ordenar");
+			
+			if("codigo".equals(orderBy)) {
+				orderBy = " codigo";
+			}else {
+				orderBy = " nombre";
+			}
+			
+			if("ascendente".equals(orderDirection)) {
+				orderDirection = " asc";
+			}else {
+				orderDirection = " desc";
+			}
+			
+			List<FabricanteDTO> listFabDTO = fabDAO.getAllDTOOrdered(orderBy, orderDirection);
+			
+			
+			request.setAttribute("listaFabricantesDTO", listFabDTO);		
 			dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantesDTO.jsp");
 			
 		} else {
@@ -91,7 +141,7 @@ public class FabricantesServlet extends HttpServlet {
 				dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/crear-fabricante.jsp");
         												
 			
-			} else if (pathParts.length == 2) {
+			} else if (pathParts.length == 2 ) {
 				FabricanteDAO fabDAO = new FabricanteDAOImpl();
 				// GET
 				// /fabricantes/{id}
@@ -106,7 +156,7 @@ public class FabricantesServlet extends HttpServlet {
 					dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/fabricantes.jsp");
 				}
 				
-			} else if (pathParts.length == 3 && "editar".equals(pathParts[1]) ) {
+			}else if (pathParts.length == 3 && "editar".equals(pathParts[1]) ) {
 				FabricanteDAO fabDAO = new FabricanteDAOImpl();
 				
 				// GET
@@ -169,7 +219,7 @@ public class FabricantesServlet extends HttpServlet {
 			
 		}
 		
-		response.sendRedirect("/tienda_informatica/fabricantes");
+		response.sendRedirect("/tienda_informatica/fabricantesDTO");
 		//response.sendRedirect("/tienda_informatica/fabricantes");
 		
 		

@@ -277,4 +277,48 @@ public class FabricanteDAOImpl extends AbstractDAOImpl implements FabricanteDAO{
 		return nProductos;
 	}
 
+	@Override
+	public List<FabricanteDTO> getAllDTOOrdered(String orderBy, String direction) {
+		
+		Connection conn = null;
+		Statement s = null;
+        ResultSet rs = null;
+        
+        List<FabricanteDTO> listFabDTO = new ArrayList<>(); 
+        
+        try {
+        	conn = connectDB();
+        	
+        	String query = "SELECT fabricante.codigo, fabricante.nombre, count(producto.codigo) FROM fabricante LEFT JOIN producto"
+        			+ "	ON producto.codigo_fabricante = fabricante.codigo"
+        			+ " group by fabricante.codigo"
+        			+ " order by" + orderBy + direction;
+
+        	
+        	s = conn.createStatement();
+    		
+        	rs = s.executeQuery(query);
+
+        	
+            while (rs.next()) {
+            	
+            	FabricanteDTO fabDTO = new FabricanteDTO();
+            	int idx = 1;
+            	
+            	fabDTO.setCodigo(rs.getInt(idx++));
+            	fabDTO.setNombre(rs.getString(idx++));
+            	fabDTO.setNumProductos(rs.getInt(idx));
+            	listFabDTO.add(fabDTO);
+            }
+          
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+            closeDb(conn, s, rs);
+        }
+        return listFabDTO;
+	}
+
 }

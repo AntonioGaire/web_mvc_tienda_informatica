@@ -208,4 +208,86 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 		
 	}
 
+	@Override
+	public List<Producto> getByName(String name) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+   	 List<Producto> listPro = new ArrayList<>(); 
+
+        try {
+        	conn = connectDB();
+        	
+        	ps = conn.prepareStatement("SELECT * FROM producto WHERE lower(nombre) like lower(?)");
+        	
+        	int idx =  1;
+        	ps.setString(idx, name);
+        	
+        	rs = ps.executeQuery();
+        	
+        	while (rs.next()) {
+            	Producto pro = new Producto();
+            	idx = 1;
+            	
+            	pro.setCodigo(rs.getInt(idx++));
+            	pro.setNombre(rs.getString(idx++));
+            	pro.setPrecio(rs.getDouble(idx++));
+            	pro.setCodigofabricante(rs.getInt(idx));
+            	
+            	listPro.add(pro);
+        	}
+        	
+        } catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+            closeDb(conn, ps, rs);
+        }
+        
+        return listPro;
+	}
+
+	@Override
+	public List<Producto> getByFulltextName(String name) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+   	 List<Producto> listPro = new ArrayList<>(); 
+
+        try {
+        	conn = connectDB();
+        	
+        	ps = conn.prepareStatement("SELECT * FROM producto WHERE MATCH(nombre) AGAINST (? in boolean mode);");
+        	
+        	int idx =  1;
+        	ps.setString(idx, name);
+        	
+        	rs = ps.executeQuery();
+        	
+        	while (rs.next()) {
+            	Producto pro = new Producto();
+            	idx = 1;
+            	
+            	pro.setCodigo(rs.getInt(idx++));
+            	pro.setNombre(rs.getString(idx++));
+            	pro.setPrecio(rs.getDouble(idx++));
+            	pro.setCodigofabricante(rs.getInt(idx));
+            	
+            	listPro.add(pro);
+        	}
+        	
+        } catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+            closeDb(conn, ps, rs);
+        }
+        
+        return listPro;
+	}
+
 }
