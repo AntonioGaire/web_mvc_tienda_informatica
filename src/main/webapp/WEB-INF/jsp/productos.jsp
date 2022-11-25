@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@page import="org.iesvegademijas.model.Producto"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.Optional"%>
+<%@page import="org.iesvegademijas.model.Usuario"%>
 
 <!DOCTYPE html>
 <html>
@@ -15,14 +17,40 @@
 	clear: both;
 }
 
+<% 
+	Optional<Usuario> optUs =(Optional<Usuario>)request.getSession().getAttribute("usuario-logado");
+	
+	if(optUs!=null){
+		if(optUs.get().getRole().equals("administrador")){
+			%>
+			.adminbtn{
+				display:inline;
+			}
+			<%
+		}else{
+			%>
+			.adminbtn{
+				display:none;
+			}			
+			<%
+		}
+	}else{
+		%>
+		.adminbtn{
+			display:none;
+		}
+		<%
+	}
+%>
+
 </style>
 </head>
 
 <body>
 
-<%@ include file="header.jspf" %>
+<%@ include file="../../header.jspf" %>
 
-<%@ include file="nav.jspf" %>
+<%@ include file="../../nav.jspf" %>
 
 <main>
             <section>
@@ -35,7 +63,7 @@
 								
 								<div style="position: absolute; left: 39%; top : 39%;">
 									
-										<form action="/tienda_informatica/productos/crear">
+										<form action="/tienda_informatica/productos/crear" class="adminbtn">
 											<input type="submit" value="Crear">
 										</form>
 								</div>
@@ -81,10 +109,10 @@
 								<form action="/tienda_informatica/productos/<%= producto.getCodigo()%>" style="display: inline;">
 				    				<input type="submit" value="Ver Detalle" />
 								</form>
-								<form action="/tienda_informatica/productos/editar/<%= producto.getCodigo()%>" style="display: inline;">
+								<form action="/tienda_informatica/productos/editar/<%= producto.getCodigo()%>" class="adminbtn"">
 				    				<input type="submit" value="Editar" />
 								</form>
-								<form action="/tienda_informatica/productos/borrar/" method="post" style="display: inline;">
+								<form action="/tienda_informatica/productos/borrar/" method="post" class="adminbtn">
 									<input type="hidden" name="__method__" value="delete"/>
 									<input type="hidden" name="codigo" value="<%= producto.getCodigo()%>"/>
 				    				<input type="submit" value="Eliminar" />
@@ -101,7 +129,7 @@
 					</div>
            </section>
 </main>
-<%@ include file ="footer.jspf"%>
+<%@ include file ="../../footer.jspf"%>
 		
 </body>
 </html>

@@ -219,7 +219,7 @@ public class FabricantesServlet extends HttpServlet {
 			
 		}
 		
-		response.sendRedirect("/tienda_informatica/fabricantesDTO");
+		response.sendRedirect("/tienda_informatica/fabricantes");
 		//response.sendRedirect("/tienda_informatica/fabricantes");
 		
 		

@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@page import="org.iesvegademijas.model.FabricanteDTO"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.Optional"%>
+<%@page import="org.iesvegademijas.model.Usuario"%>
 
 <!DOCTYPE html>
 <html>
@@ -15,18 +17,41 @@
 	clear: both;
 }
 
-/* main{ */
-/*     min-height: 100vh; */
-/* } */
+
+<% 
+	Optional<Usuario> optUs =(Optional<Usuario>)request.getSession().getAttribute("usuario-logado");
+	
+	if(optUs!=null){
+		if(optUs.get().getRole().equals("administrador")){
+			%>
+			.adminbtn{
+				display:inline;
+			}
+			<%
+		}else{
+			%>
+			.adminbtn{
+				display:none;
+			}			
+			<%
+		}
+	}else{
+		%>
+		.adminbtn{
+			display:none;
+		}
+		<%
+	}
+%>
 
 </style>
 </head>
 
 <body>
 
-<%@ include file="header.jspf" %>
+<%@ include file="../../header.jspf" %>
 
-<%@ include file="nav.jspf" %>
+<%@ include file="../../nav.jspf" %>
 
 <main class ="body_sec">
             <section id="Content">
@@ -39,7 +64,7 @@
 									
 									<div style="position: absolute; left: 39%; top : 39%;">
 										
-											<form action="/tienda_informatica/fabricantes/crear">
+											<form action="/tienda_informatica/fabricantes/crear" class="adminbtn" >
 												<input type="submit" value="Crear">
 											</form>
 									</div>
@@ -90,10 +115,10 @@
 									<form action="/tienda_informatica/fabricantes/<%= fabricante.getCodigo()%>" style="display: inline;">
 					    				<input type="submit" value="Ver Detalle" />
 									</form>
-									<form action="/tienda_informatica/fabricantes/editar/<%= fabricante.getCodigo()%>" style="display: inline;">
+									<form action="/tienda_informatica/fabricantes/editar/<%= fabricante.getCodigo()%>" class="adminbtn">
 					    				<input type="submit" value="Editar" />
 									</form>
-									<form action="/tienda_informatica/fabricantes/borrar/" method="post" style="display: inline;">
+									<form action="/tienda_informatica/fabricantes/borrar/" method="post" class="adminbtn"">
 										<input type="hidden" name="__method__" value="delete"/>
 										<input type="hidden" name="codigo" value="<%= fabricante.getCodigo()%>"/>
 					    				<input type="submit" value="Eliminar" />
@@ -110,7 +135,7 @@
 						</div>
             </section>
 </main>
-<%@ include file ="footer.jspf"%>
+<%@ include file ="../../footer.jspf"%>
 
 	
 </body>

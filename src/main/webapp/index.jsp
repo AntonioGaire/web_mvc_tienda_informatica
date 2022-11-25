@@ -3,7 +3,7 @@
 <title>Redirigiendo...</title>
 </head>
 <body>
-	<%@ include file="header.jspf" %>
+	<%@ include file="/header.jspf" %>
 	
 	<%@ include file="nav.jspf" %>
 	
